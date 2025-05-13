@@ -1,0 +1,113 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Lung Disease Prediction</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <style>
+        body {
+            background: linear-gradient(to bottom right, #d9e7ff, #f0f7ff);
+            min-height: 100vh;
+            font-family: 'Segoe UI', sans-serif;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 30px;
+        }
+
+        .app-card {
+            background: white;
+            border-radius: 20px;
+            box-shadow: 0 8px 20px rgba(0, 0, 0, 0.1);
+            padding: 30px;
+            width: 100%;
+            max-width: 600px;
+        }
+
+        .btn-primary {
+            background-color: #007bff;
+            border-radius: 12px;
+            font-weight: 600;
+            transition: background-color 0.3s;
+        }
+
+        .btn-primary:hover {
+            background-color: #0056b3;
+        }
+
+        .progress {
+            height: 20px;
+            border-radius: 10px;
+            overflow: hidden;
+        }
+
+        .progress-bar {
+            font-weight: bold;
+        }
+
+        .result-text {
+            font-size: 1.4rem;
+            font-weight: 600;
+        }
+
+        .img-preview {
+            border-radius: 10px;
+            margin-top: 15px;
+            max-height: 300px;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+        }
+    </style>
+</head>
+<body>
+
+    <div class="app-card">
+        <h2 class="text-center mb-4">🩺 Lung Disease Prediction</h2>
+
+        <form id="uploadForm" action="/predict" method="post" enctype="multipart/form-data">
+            <div class="mb-3">
+                <label for="fileInput" class="form-label">Upload Chest X-ray</label>
+                <input type="file" name="file" accept="image/*" class="form-control" id="fileInput" required>
+            </div>
+            <div class="d-grid">
+                <button type="submit" class="btn btn-primary">🔍 Predict</button>
+            </div>
+
+            <!-- Fake Progress Bar -->
+            <div id="progressWrapper" class="progress mt-4" style="display: none;">
+                <div id="progressBar" class="progress-bar progress-bar-striped progress-bar-animated bg-info" style="width: 0%">0%</div>
+            </div>
+        </form>
+
+        {% if prediction %}
+        <div class="mt-4 text-center">
+            <p class="result-text text-{{ 'danger' if 'Detected' in prediction else 'success' }}">
+                ✅ Prediction: {{ prediction }}
+            </p>
+            <img src="{{ img_path }}" alt="Prediction Image" class="img-fluid img-preview">
+        </div>
+        {% endif %}
+    </div>
+
+    <script>
+        const form = document.getElementById('uploadForm');
+        const progressWrapper = document.getElementById('progressWrapper');
+        const progressBar = document.getElementById('progressBar');
+
+        form.addEventListener('submit', function () {
+            progressWrapper.style.display = 'block';
+
+            let percent = 0;
+            const interval = setInterval(() => {
+                if (percent >= 100) {
+                    clearInterval(interval);
+                } else {
+                    percent += 5;
+                    progressBar.style.width = percent + '%';
+                    progressBar.innerText = percent + '%';
+                }
+            }, 80); // Adjust to control speed
+        });
+    </script>
+
+</body>
+</html>

@@ -1,0 +1,30 @@
+import tensorflow as tf
+import numpy as np
+from tensorflow.keras.preprocessing import image
+
+# Load the trained model
+model_path = "inception_lung_disease_model.keras"  # Change this to your saved model path
+model = tf.keras.models.load_model(model_path)
+
+# Image size (should match the input size of the model)
+img_size = 299  # InceptionV3 recommended input size
+
+def predict_image(image_path):
+    # Load and preprocess the image
+    img = image.load_img(image_path, target_size=(img_size, img_size))
+    img_array = image.img_to_array(img)
+    img_array = np.expand_dims(img_array, axis=0)
+    img_array /= 255.0  # Rescale to match training preprocessing
+    
+    # Make prediction
+    prediction = model.predict(img_array)
+    
+    # Interpret the result
+    if prediction[0] >= 0.5:
+        print("The image is classified as: Affected (Positive for disease)")
+    else:
+        print("The image is classified as: Not Affected (Negative for disease)")
+
+# Example usage
+image_path = r"C:\Users\msk10\OneDrive\Desktop\normal.jpg"  # Replace with the actual path
+predict_image(image_path)
